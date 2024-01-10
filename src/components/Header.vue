@@ -163,7 +163,7 @@ const handleSelectContent = (key, item) => {
             <div class=" text-lg">GPT管理系统</div>
             <div class="flex items-center space-x-3">
                 <n-dropdown :options="options" placement="bottom-start" @select="handleSelect">
-                    <NAvatar :bordered="true" :round="true" :src="picture">
+                    <NAvatar :bordered="true" :round="true" :src="picture" :size="'large'">
                     </NAvatar>
                 </n-dropdown>
             </div>

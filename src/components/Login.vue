@@ -25,12 +25,16 @@ const login = ()=>{
         username: user.username,
         password: user.password
     })).then(response=>{
+        console.log(response.data)
         if(response.data.Code !== 0){
             message.error('用户名或密码错误')
             return 
         }
         username.value = user.username
         token.value = response.headers.token
+        if(response.data.Result.avatar !== ""){
+            picture.value = "data:image/png;base64," + response.data.Result.avatar
+        }
         router.push({
             name: 'header'
         })
@@ -53,7 +57,6 @@ const rules = {
     {
         required: true,
         validator(rule, value) {
-
             if(!value) return new Error("请输入密码");
             return true;
         },

@@ -5,34 +5,43 @@ import { NAvatar, useMessage } from 'naive-ui';
 import { PencilSharp } from '@vicons/ionicons5';
 import { template } from 'lodash';
 import useAxios from '../utils/useAxios';
+import { baseURL } from '../utils/useAxios';
 import axios from 'axios';
 
 const {
     username,
     picture,
-    intro
+    intro,
+    token
 } = toRefs(useUser())
 const introduce = ref(intro.value)
 const message = useMessage()
+const header = ref({Authorization: token.value})
+console.log(baseURL)
 
 defineExpose({ introduce })
 
-const changePicture = (file)=>{
-    axios.post('http://127.0.0.1:9999/upload', {name: '12', file:file}).then(res=>{
-        console.log(res)
-    }) 
+const beforeUpload = (file)=>{
+    console.log(file.file.file.type)
+    if(file.file.file.type != "image/png" && file.file.file.type != "image/jpg"){
+        message.warning("请上传图片")
+        return false
+    }
 }
 
-const beforeUpload = async (data) => {
-        if (data.file.file?.type !== "image/png") {
-          message.error("只能上传png格式的图片文件，请重新上传");
-          return false;
-        }
-        return true;
-      }
+const uploadRef = ref(null)
 
-//   48|DCtmK8yRDOf2TQgDE68iIyLB2aM1r7rIcUoh4sr7
-
+const finishUpload = (file)=>{
+    var res = JSON.parse(file.event.target.response)
+    console.log(res)
+    uploadRef.value.clear()
+    if (res.Code === 1){
+        message.warning("图片上传失败")
+        return 
+    }
+    picture.value = "data:image/png;base64," + res.Result.avatar
+    message.success("图片上传成功")
+}
 
 </script>
 
@@ -48,17 +57,22 @@ const beforeUpload = async (data) => {
             </n-avatar>
             <template #value>
                 <n-upload
+                    ref="uploadRef"
                     class="flex items-center"
-                    method = 'GET'
-                    action="http://127.0.0.1:9999/upload"
-                    :headers="{
-                        Authorization: '48|DCtmK8yRDOf2TQgDE68iIyLB2aM1r7rIcUoh4sr7', 
-                        Accept: 'application/json', 
-                        'Content-Type':'multipart/form-data',
-                        }"
-                    @error="changePicture"
+                    method = 'POST'
+                    :action='baseURL+"/v1/user/uploadavatar"'
+                    :headers="header"
+                    :show-cancel-button = "false"
+                    :show-remove-button ="false"
+                    :show-retry-button = "false"
+                    :show-file-list = "false"
+                    :max="1"
+                    :keep-file-after-finish="false"
+                    @before-upload="beforeUpload"
+                    @finish="finishUpload"
+                    @error="()=>{uploadRef.value.clear()}"
                     >
-                    <n-icon :component="PencilSharp"></n-icon>
+                    <n-icon :component="PencilSharp" class="hover:cursor-pointer"></n-icon>
                 </n-upload>
             </template>
         </n-badge>

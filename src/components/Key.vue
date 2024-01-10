@@ -214,14 +214,14 @@ watch(page, getKeys)
 </script>
 
 <template>
-    <div class="flex flex-col items-center w-full h-full pt-4 px-10 overflow-auto">
+    <div class="flex flex-col items-center w-full h-full pt-4 px-10 space-y-3 overflow-auto">
         <n-data-table
             size="medium"
             :columns="columns"
             :data="tokens"
             :bordered="true"
         />
-        <div class="flex justify-end w-full">
+        <div class="flex justify-end w-full px-1">
             <n-pagination v-model:page="page" :page-count="pageTotal" />
         </div>
     </div>

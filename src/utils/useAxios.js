@@ -3,9 +3,11 @@ import axios from 'axios';
 import router from '../router/index';
 import { useUser } from '../store/useUser';
 
+export const baseURL = "http://127.0.0.1:5201"
+
 const useAxios = axios.create({
-    baseURL: 'http://127.0.0.1:5201',
-    timeout: 1000
+    baseURL: baseURL,
+    timeout: 10000
 })
 
 useAxios.interceptors.request.use(function (config) {
